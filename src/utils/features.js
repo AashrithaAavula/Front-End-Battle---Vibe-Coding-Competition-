@@ -1,0 +1,81 @@
+/**
+ * features.js — Static structured content for the Bento Grid / Accordion.
+ * RE-RENDER SCOPE: Static config file
+ * ANIMATION METHOD: None
+ * ASSET USED: None
+ */
+
+export const FEATURES = [
+  {
+    id: 'pipelines',
+    iconName: 'IconPipeline',
+    tag: 'Automation',
+    title: 'Zero-Code AI Pipelines',
+    shortDesc: 'Build and deploy pipelines with natural language instructions.',
+    longDesc: 'Transform unstructured text, PDFs, or raw APIs into cleaned, structured tables. Our AI engine dynamically constructs transformations without manual Python or SQL scripts. Simply describe your destination format and let the pipeline configure itself.',
+    stat: '10x',
+    statLabel: 'Faster setup',
+    accent: 'var(--clr-accent-primary)',
+    size: 'large',
+  },
+  {
+    id: 'integrations',
+    iconName: 'IconIntegrations',
+    tag: 'Connectors',
+    title: 'Connect Anything Instantly',
+    shortDesc: 'Sync with 300+ platforms or build custom API endpoints in seconds.',
+    longDesc: 'Stream data seamlessly from Salesforce, HubSpot, database replicas, or custom webhook endpoints. Our semantic mapper matches schemas automatically, eliminating manual translation layers and structural mismatch errors.',
+    stat: '300+',
+    statLabel: 'Integrations',
+    accent: 'var(--clr-accent-cyan)',
+    size: 'tall',
+  },
+  {
+    id: 'analytics',
+    iconName: 'IconAnalytics',
+    tag: 'Insights',
+    title: 'Live Flow Intelligence',
+    shortDesc: 'Monitor execution pathways and data quality in real-time.',
+    longDesc: 'Gain instant visibility into your automated streams. Track performance bottlenecks, volume spikes, and quality metrics with visual latency graphs and instant custom alert thresholds.',
+    stat: '< 50ms',
+    statLabel: 'Latencies',
+    accent: 'var(--clr-accent-violet)',
+    size: 'normal',
+  },
+  {
+    id: 'security',
+    iconName: 'IconSecurity',
+    tag: 'Security',
+    title: 'SOC2 & HIPAA Compliant',
+    shortDesc: 'Enterprise encryption protocols with cell-level decryption controls.',
+    longDesc: 'Secure your data in transit and at rest with customer-managed keys. Features strict role-based access control, comprehensive audit logs, and automatic PII masking before data touches any storage layer.',
+    stat: '99.99%',
+    statLabel: 'Uptime SLA',
+    accent: 'var(--clr-accent-emerald)',
+    size: 'normal',
+  },
+  {
+    id: 'collab',
+    iconName: 'IconCollab',
+    tag: 'Collaboration',
+    title: 'Team-Wide Orchestration',
+    shortDesc: 'Collaboratively edit, review, and roll back pipelines with Git version control.',
+    longDesc: 'Enable your engineering and business teams to collaborate in a single interface. Review pipeline drafts, inspect diffs, set automated approvals, and roll back changes instantly in case of upstream schema breaks.',
+    stat: '0',
+    statLabel: 'Conflicts',
+    accent: 'var(--clr-accent-amber)',
+    size: 'wide',
+  },
+  {
+    id: 'scale',
+    iconName: 'IconScale',
+    tag: 'Infrastructure',
+    title: 'Serverless Scale-to-Zero',
+    shortDesc: 'Compute auto-scales with data volume, charging only for executions.',
+    longDesc: 'Never provision servers or overpay for idle compute. Our serverless architecture scales from zero to millions of records dynamically, providing dedicated compute isolations for peak hours.',
+    stat: '1M+',
+    statLabel: 'Rows/Sec',
+    accent: 'var(--clr-accent-red)',
+    size: 'normal',
+  },
+];

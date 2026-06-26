@@ -1,0 +1,736 @@
+/*
+ * globals.css
+ * ANIMATION METHOD: CSS @keyframes + CSS Transitions
+ * RE-RENDER SCOPE: None – static stylesheet
+ *
+ * ─────────────────────────────────────────────────────────
+ * COMPETITION PALETTE — every color traces to a variable
+ * No raw hex may appear in component CSS files.
+ * ─────────────────────────────────────────────────────────
+ */
+
+@import "tailwindcss";
+
+/* ════════════════════════════════════════
+   1. DESIGN TOKENS (Competition palette)
+   ════════════════════════════════════════ */
+:root {
+  /* Backgrounds */
+  --clr-bg-base:      #0F1A22;   /* Deep slate-teal background (derived from Oceanic Noir #172B36) */
+  --clr-bg-raised:    #172B36;   /* Oceanic Noir */
+  --clr-bg-surface:   #1C323E;   /* Lighter slate-teal */
+  --clr-bg-card:      #114C5A;   /* Nocturnal Expedition */
+  --clr-bg-card-hover:#155A6A;   /* Lighter Nocturnal Expedition */
+
+  /* Brand / Accent */
+  --clr-accent-primary:   #FFC801;   /* Forsythia */
+  --clr-accent-primary-lt:#FFD73F;   /* Light Forsythia */
+  --clr-accent-cyan:      #FF9932;   /* Deep Saffron */
+  --clr-accent-cyan-lt:   #FFAF5C;   /* Light Deep Saffron */
+  --clr-accent-violet:    #FFB11A;   /* Golden-orange sunset mix */
+  --clr-accent-emerald:   #D9E8E2;   /* Mystic Mint */
+  --clr-accent-amber:     #FFC801;   /* Forsythia */
+  --clr-accent-red:       #FF9932;   /* Deep Saffron */
+
+  /* Text */
+  --clr-text-primary:   #F1F6F4;   /* Arctic Powder */
+  --clr-text-secondary: #D9E8E2;   /* Mystic Mint */
+  --clr-text-muted:     #6D868C;   /* Muted slate-teal */
+
+  /* Borders */
+  --clr-border:         rgba(217, 232, 226, 0.12); /* Mystic Mint opacity */
+  --clr-border-hover:   rgba(255, 200, 1, 0.35);  /* Forsythia opacity */
+  --clr-border-active:  rgba(255, 200, 1, 0.6);   /* Forsythia active opacity */
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.45);
+  --shadow-glow: 0 0 40px rgba(255, 200, 1, 0.12);      /* Forsythia glow */
+  --shadow-glow-cyan: 0 0 40px rgba(255, 153, 50, 0.12); /* Deep Saffron glow */
+
+  /* Radii */
+  --radius-card: 16px;
+  --radius-sm:   8px;
+  --radius-pill: 9999px;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Transitions – competition-mandated timing */
+  --dur-micro:     180ms;   /* hover, toggle, focus */
+  --dur-structural:350ms;   /* accordion, layout   */
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ════════════════════════════════════════
+   2. RESET  — wrapped in @layer base so it cannot override
+              Tailwind v4 @layer utilities (unlayered styles
+              have higher priority than layered styles).
+   ════════════════════════════════════════ */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--clr-bg-base);
+    color: var(--clr-text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+}
+
+
+/* ════════════════════════════════════════
+   3. FOCUS — visible keyboard indicator
+   ════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--clr-accent-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ════════════════════════════════════════
+   4. KEYFRAMES — all animation definitions
+   Entry budget: last element ≤ 500ms
+   ════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes pulseGlow {
+  0%,100% { opacity: 0.4; transform: scale(1);    }
+  50%      { opacity: 0.7; transform: scale(1.04); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0);   }
+  50%      { transform: translateY(-7px); }
+}
+@keyframes ticker {
+  from { transform: translateX(0);    }
+  to   { transform: translateX(-50%); }
+}
+@keyframes barGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@keyframes dotBlink {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+@keyframes orbitDot {
+  from { transform: translateX(52px) rotate(0deg);   }
+  to   { transform: translateX(52px) rotate(360deg); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ════════════════════════════════════════
+   5. ANIMATION UTILITY CLASSES
+   Stagger delays: 0→400ms so last ≤ 500ms
+   ════════════════════════════════════════ */
+.anim-fade-in-up  { animation: fadeInUp 0.45s var(--ease-out) both; }
+.anim-fade-in     { animation: fadeIn   0.4s  var(--ease-out) both; }
+.anim-scale-in    { animation: scaleIn  0.4s  var(--ease-out) both; }
+.anim-float       { animation: float 4s ease-in-out infinite; }
+.anim-pulse-glow  { animation: pulseGlow 3s ease-in-out infinite; }
+
+.delay-0   { animation-delay:   0ms; }
+.delay-80  { animation-delay:  80ms; }
+.delay-160 { animation-delay: 160ms; }
+.delay-240 { animation-delay: 240ms; }
+.delay-320 { animation-delay: 320ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* ════════════════════════════════════════
+   6. REDUCED MOTION (mandatory)
+   ════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ════════════════════════════════════════
+   6b. ACCESSIBILITY UTILITIES
+   ════════════════════════════════════════ */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.focus\:not-sr-only:focus {
+  position: fixed;
+  width: auto; height: auto;
+  padding: 10px 24px;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ════════════════════════════════════════
+   7. TYPOGRAPHY UTILITIES
+   ════════════════════════════════════════ */
+.gradient-text {
+  background: linear-gradient(135deg, var(--clr-accent-primary) 0%, var(--clr-accent-violet) 45%, var(--clr-accent-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--clr-accent-primary),
+    var(--clr-accent-violet),
+    var(--clr-accent-cyan),
+    var(--clr-accent-primary)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+.hero-title {
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.section-title {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* ════════════════════════════════════════
+   8. BUTTON SYSTEM
+   ════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--clr-accent-primary), var(--clr-accent-violet));
+  color: #172B36; /* High contrast Oceanic Noir text for yellow background */
+  font-weight: 700;
+  font-size: 0.9375rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity var(--dur-micro) var(--ease-out),
+              transform var(--dur-micro) var(--ease-out),
+              box-shadow var(--dur-micro) var(--ease-out);
+  box-shadow: 0 4px 20px rgba(255, 200, 1, 0.3);
+}
+.btn-primary:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255, 200, 1, 0.45);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 28px;
+  background: transparent;
+  color: var(--clr-text-primary);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--clr-border-hover);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color var(--dur-micro) var(--ease-out),
+              background   var(--dur-micro) var(--ease-out),
+              transform    var(--dur-micro) var(--ease-out);
+}
+.btn-ghost:hover {
+  border-color: var(--clr-accent-primary);
+  background: rgba(255, 200, 1, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ════════════════════════════════════════
+   9. GLASS CARD
+   ════════════════════════════════════════ */
+.glass-card {
+  background: rgba(23, 43, 54, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--dur-micro) var(--ease-out),
+    box-shadow   var(--dur-micro) var(--ease-out),
+    transform    var(--dur-micro) var(--ease-out);
+}
+.glass-card:hover {
+  border-color: var(--clr-border-hover);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  transform: translateY(-3px);
+}
+
+/* ════════════════════════════════════════
+   10. SECTION TAG CHIP
+   ════════════════════════════════════════ */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  background: rgba(255, 200, 1, 0.08);
+  border: 1px solid rgba(255, 200, 1, 0.2);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--clr-accent-primary-lt);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ════════════════════════════════════════
+   11. NAVBAR
+   ════════════════════════════════════════ */
+.navbar {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 100;
+  transition:
+    background     var(--dur-structural) var(--ease-in-out),
+    border-color   var(--dur-structural) var(--ease-in-out),
+    box-shadow     var(--dur-structural) var(--ease-in-out);
+}
+.navbar--scrolled {
+  background: rgba(15, 26, 34, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--clr-border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+}
+.nav-link {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--clr-text-secondary);
+  text-decoration: none;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+.nav-link:hover { color: var(--clr-text-primary); }
+
+/* Mobile menu */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px 20px;
+  background: rgba(15, 26, 34, 0.97);
+  border-top: 1px solid var(--clr-border);
+  animation: fadeInUp 0.25s var(--ease-out) both;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+.mobile-menu--open { display: flex; }
+
+/* ════════════════════════════════════════
+   12. HERO
+   ════════════════════════════════════════ */
+.hero-grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 200, 1, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 200, 1, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ════════════════════════════════════════
+   13. LOGO STRIP / TICKER
+   ════════════════════════════════════════ */
+.ticker-mask {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  overflow: hidden;
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 56px;
+  animation: ticker 32s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+
+/* ════════════════════════════════════════
+   14. BENTO GRID
+   ════════════════════════════════════════ */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+/* Named grid areas – 6 cards, 3-col layout */
+.bento-grid > *:nth-child(1) { grid-column: span 2; }  /* large  */
+.bento-grid > *:nth-child(2) { grid-column: span 1; grid-row: span 2; } /* tall */
+.bento-grid > *:nth-child(3) { grid-column: span 1; }
+.bento-grid > *:nth-child(4) { grid-column: span 1; }
+.bento-grid > *:nth-child(5) { grid-column: span 3; }  /* wide  */
+.bento-grid > *:nth-child(6) { grid-column: span 1; }
+
+@media (max-width: 1023px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-flow: dense;
+  }
+  .bento-grid > *:nth-child(1) { grid-column: span 2; }
+  .bento-grid > *:nth-child(2) { grid-column: span 1; grid-row: span 1; }
+  .bento-grid > *:nth-child(5) { grid-column: span 2; }
+}
+@media (max-width: 767px) {
+  .bento-grid { display: none; }
+}
+
+/* Bento card */
+.bento-card {
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-micro) var(--ease-out),
+    transform    var(--dur-micro) var(--ease-out),
+    box-shadow   var(--dur-micro) var(--ease-out),
+    background   var(--dur-micro) var(--ease-out);
+}
+.bento-card:hover {
+  border-color: var(--clr-border-hover);
+  transform: translateY(-3px);
+}
+.bento-card--active {
+  border-color: var(--clr-border-active);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ════════════════════════════════════════
+   15. ACCORDION (mobile Features)
+   ════════════════════════════════════════ */
+.accordion-list {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+@media (max-width: 767px) {
+  .accordion-list { display: flex; }
+}
+.accordion-item {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--clr-bg-card);
+  transition: border-color var(--dur-structural) var(--ease-in-out);
+}
+.accordion-item--active { border-color: var(--clr-border-active); }
+
+.accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--clr-text-primary);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-align: left;
+}
+
+.accordion-chevron {
+  flex-shrink: 0;
+  transition: transform var(--dur-structural) var(--ease-in-out);
+  color: var(--clr-text-secondary);
+}
+.accordion-item--active .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* CRITICAL: max-height trick — do NOT animate height directly */
+.accordion-panel {
+  max-height: 0;
+  overflow: hidden;
+  /* transition on max-height triggers the expand animation */
+  transition: max-height var(--dur-structural) var(--ease-in-out);
+}
+.accordion-item--active .accordion-panel {
+  /* scrollHeight is set inline by the hook — see Accordion.jsx */
+  max-height: var(--panel-max-height, 480px);
+}
+.accordion-panel-inner {
+  padding: 0 20px 20px;
+  color: var(--clr-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+/* ════════════════════════════════════════
+   16. PRICING
+   ════════════════════════════════════════ */
+.pricing-card {
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-card);
+  padding: 36px 28px;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color var(--dur-micro) var(--ease-out),
+    transform    var(--dur-micro) var(--ease-out),
+    box-shadow   var(--dur-micro) var(--ease-out);
+}
+.pricing-card:hover {
+  border-color: var(--clr-border-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card), 0 0 30px rgba(255, 200, 1, 0.05);
+}
+.pricing-card--featured {
+  border-color: var(--clr-accent-primary);
+  background: linear-gradient(160deg, rgba(255, 200, 1, 0.05) 0%, var(--clr-bg-card) 55%);
+  box-shadow: 0 0 0 1px rgba(255, 200, 1, 0.25), var(--shadow-card), var(--shadow-glow);
+}
+.pricing-card--featured:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 0 1px rgba(255, 200, 1, 0.45), var(--shadow-card), 0 0 60px rgba(255, 200, 1, 0.2);
+}
+
+/* Price value – only this text node updates on currency/billing change */
+.price-amount {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--clr-text-primary);
+  line-height: 1;
+  perspective: 400px;
+}
+.price-char {
+  display: inline-block;
+  transition: transform var(--dur-micro) cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              opacity var(--dur-micro) var(--ease-out);
+  transform-origin: center bottom;
+  backface-visibility: hidden;
+}
+.price-char--updating {
+  transform: rotateX(-90deg) translateY(-6px);
+  opacity: 0;
+}
+.pricing-card--featured .price-amount {
+  color: var(--clr-accent-primary-lt);
+}
+
+/* ════════════════════════════════════════
+   16b. SEGMENTED CONTROLS — shared pill system
+        Used by PricingToggle and CurrencySelect.
+        Sliding indicator: transform:translateX ONLY (hardware-accelerated).
+        No background/width transitions on the pill — only transform.
+   ════════════════════════════════════════ */
+
+/* Track — pill container */
+.seg-track {
+  position: relative;          /* pill is absolutely positioned inside */
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-pill);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* Sliding pill — ONLY transform and box-shadow are transitioned */
+.seg-pill {
+  position: absolute;
+  top: 4px;
+  left: 0;                     /* JS sets translateX + width inline */
+  height: calc(100% - 8px);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    135deg,
+    var(--clr-accent-primary) 0%,
+    var(--clr-accent-violet)  100%
+  );
+  box-shadow: 0 2px 12px rgba(255, 200, 1, 0.30),
+              0 0   20px rgba(255, 200, 1, 0.12);
+  /* transform + width set inline by JS after DOM read */
+  transition: transform var(--dur-micro) var(--ease-out),
+              width    var(--dur-micro) var(--ease-out),
+              box-shadow var(--dur-micro) var(--ease-out);
+  pointer-events: none;        /* never intercept clicks */
+  will-change: transform;
+}
+
+/* Individual segment buttons */
+.seg-btn {
+  position: relative;
+  z-index: 1;                  /* sit above the pill */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--clr-text-secondary);
+  white-space: nowrap;
+  transition: color var(--dur-micro) var(--ease-out);
+  outline: none;
+}
+.seg-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--clr-accent-primary);
+  border-radius: var(--radius-pill);
+}
+.seg-btn--active {
+  color: var(--clr-bg-base);   /* dark text on warm gradient pill */
+}
+.seg-btn:not(.seg-btn--active):hover {
+  color: var(--clr-text-primary);
+}
+
+/* Compact variant for currency (narrower padding) */
+.seg-btn--sm {
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+/* "Save 20%" badge inside the billing toggle */
+.seg-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(217, 232, 226, 0.15);
+  color: var(--clr-accent-emerald);
+  border: 1px solid rgba(217, 232, 226, 0.2);
+  transition: background var(--dur-micro) var(--ease-out),
+              color     var(--dur-micro) var(--ease-out),
+              border-color var(--dur-micro) var(--ease-out);
+}
+/* When annual is active the pill is behind the badge — invert badge for contrast */
+.seg-btn--active .seg-badge {
+  background: rgba(15, 26, 34, 0.25);
+  color: var(--clr-bg-base);
+  border-color: rgba(15, 26, 34, 0.2);
+}
+
+/* Compact currency track (slightly narrower) */
+.seg-track--currency {
+  gap: 1px;
+  padding: 3px;
+}
+
+/* ════════════════════════════════════════
+   17. TESTIMONIALS — infinite marquee
+   ════════════════════════════════════════ */
+.testimonials-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: ticker 42s linear infinite;
+}
+.testimonials-track:hover { animation-play-state: paused; }
+.testimonial-card {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  transition: border-color var(--dur-micro) var(--ease-out),
+              transform    var(--dur-micro) var(--ease-out);
+}
+.testimonial-card:hover {
+  border-color: var(--clr-border-hover);
+  transform: translateY(-3px);
+}
+
+/* ════════════════════════════════════════
+   18. CTA SECTION
+   ════════════════════════════════════════ */
+.cta-card {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 200, 1, 0.12) 0%,
+    rgba(255, 153, 50, 0.08) 50%,
+    rgba(217, 232, 226, 0.08)  100%
+  );
+  border: 1px solid rgba(255, 200, 1, 0.2);
+  border-radius: 24px;
+}
+
+/* ════════════════════════════════════════
+   19. SCROLL REVEAL (IntersectionObserver)
+   Applied via JS — see useIntersection hook
+   ════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity    0.45s var(--ease-out),
+              transform  0.45s var(--ease-out);
+}
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ════════════════════════════════════════
+   20. SCROLLBAR
+   ════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--clr-bg-base); }
+::-webkit-scrollbar-thumb { background: var(--clr-accent-primary); border-radius: 3px; }
+
+::selection { background: rgba(255, 200, 1, 0.25); color: var(--clr-bg-base); }
